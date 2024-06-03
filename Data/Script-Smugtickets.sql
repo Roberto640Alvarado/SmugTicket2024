@@ -197,6 +197,13 @@ CREATE TABLE usuarios_asignados_eventos (
 	CONSTRAINT usuarios_asignados_eventos_pk PRIMARY KEY (id)
 );
 
+--Agregando Tabla ubicación
+CREATE TABLE ubicacion (
+    id_ubicacion UUID NOT NULL DEFAULT gen_random_uuid(),
+    nombre VARCHAR(255) NOT NULL,
+    precio float4 NULL,
+    PRIMARY KEY (id_ubicacion)
+);
 
 -- public.usuarios_asignados_eventos foreign keys
 
