@@ -24,7 +24,7 @@ public class UbicacionImpl implements UbicacionService {
 
 	@Override
 	public Ubicacion get_ubicacion(UUID code) {
-		Ubicacion ubicacion = ubicacionaRepository.findByIdUbicacion(code);
+		Ubicacion ubicacion = ubicacionaRepository.findByCode(code);
 		return ubicacion;
 	}
 
