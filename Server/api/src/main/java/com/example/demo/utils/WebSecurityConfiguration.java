@@ -66,6 +66,7 @@ public class WebSecurityConfiguration {
 				.requestMatchers("/email/sendEmail").permitAll()
 				.requestMatchers("/evento/getSingleEvent").permitAll()
 				.requestMatchers("/lugares/getLocalidad").permitAll()
+				.requestMatchers("/ubicacion/**").permitAll()
 				.anyRequest().authenticated()
 			)
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
