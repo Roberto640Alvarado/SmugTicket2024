@@ -10,12 +10,14 @@ import { useParams } from 'react-router-dom';
 import EventService from '../../services/Event/EventService';
 import context from '../../Context/UserContext';
 import LocalityService from '../../services/Locality/LocalityService';
+import ubicationService from '../../services/Ubication/UbicationService';
 
 const ViewEvent = () => {
     const { id } = useParams();
     const [event, setEvent] = useState(null);
     const [loggueado, setLoggueado] = useState(context.getToken() !== null);
     const [localidades, setLocalidades] = useState([]);
+    const [ubicacion, setUbicacion] = useState('');
     const navigate = useNavigate();
 
     const formatearFecha = (fecha) => {
@@ -29,27 +31,43 @@ const ViewEvent = () => {
         }
 
         fetchEventDetails();
-        const fetchLocality = async () => {
-            try {
-                const response = await LocalityService.getLocalidadesPorEvento(id);
-                if (Array.isArray(response)) {
-                    setLocalidades(response);
-                }
-            } catch (error) {
-                console.error('Error al obtener las localidades', error);
-            }
-        };
-
         fetchLocality();
     }, [id]);
 
+    useEffect(() => {
+        if (event) {
+            fetchUbication(event.lugar);
+        }
+    }, [event]);
+
     const fetchEventDetails = async () => {
         const response = await EventService.getEventById(id);
-        console.log(response);
         if (!response.error) {
             setEvent(response);
         } else {
             console.log(response.error);
+        }
+    };
+
+    const fetchLocality = async () => {
+        try {
+            const response = await LocalityService.getLocalidadesPorEvento(id);
+            if (Array.isArray(response)) {
+                setLocalidades(response);
+            }
+        } catch (error) {
+            console.error('Error al obtener las localidades', error);
+        }
+    };
+
+    const fetchUbication = async (lugarId) => {
+        try {
+            const response = await ubicationService.getOneUbications(lugarId);
+            if (response && response.nombre) {
+                setUbicacion(response.nombre);
+            }
+        } catch (error) {
+            console.error('Error al obtener la ubicación', error);
         }
     };
 
@@ -105,12 +123,11 @@ const ViewEvent = () => {
                         </div>
                         <div className="flex items-center space-x-2">
                             <FontAwesomeIcon icon={faLocationDot} className='w-8 h-8 text-blue' />
-                            <p className="text-2xl">{event.lugar}</p>
+                            <p className="text-2xl">{ubicacion}</p>
                         </div>
                     </div>
                     <div className="flex flex-col md:flex-row justify-center py-10 md:justify-between md:px-4">
                         {loggueado ? <button className="px-4 py-2 bg-orange rounded-md mr-4 text-black font-bold mb-2 md:mb-0" onClick={handlePurchase}>Comprar Ticket</button> : console.log('no logueado')}
-
                         <button className="px-4 py-2 bg-blue rounded-md text-white font-bold" onClick={handleBack}>Regresar</button>
                     </div>
                 </div>

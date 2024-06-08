@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_API = 'https://api.smug.solutions'
+const BASE_API = 'http://localhost:8080'
 
 const API = axios.create({
   baseURL: BASE_API,

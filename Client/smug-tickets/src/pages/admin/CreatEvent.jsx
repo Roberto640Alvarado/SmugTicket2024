@@ -5,6 +5,7 @@ import { MessageSuccess, NotFound } from '../../utils/Alert.jsx';
 import { useNavigate } from 'react-router-dom';
 import EventService from '../../services/Event/EventService';
 import CategoryService from '../../services/Category/CategoryService';
+import ubicationService from '../../services/Ubication/UbicationService.js';
 import context from '../../Context/UserContext';
 
 export const CreateEvent = () => {
@@ -17,8 +18,10 @@ export const CreateEvent = () => {
     const [duracion, setDuracion] = useState('');
     const [imagenUrl1, setImagenUrl1] = useState('');
     const [categories, setCategories] = useState([]); // Lista de categorias
+    const [ubicacions, setUbicacion] = useState([]); //Lista de ubicaciones
 
     const [selectedCategoryId, setSelectedCategoryId] = useState('');
+    const [selectedUbicationId, setSelectedUbicationId] = useState('');
 
     //Traer todas las categorias
     useEffect(() => {
@@ -37,7 +40,22 @@ export const CreateEvent = () => {
             }
         };
 
+        const fetchUbications = async () => {
+            try {
+                const response = await ubicationService.getAll();
+                console.log(response);
+                if (Array.isArray(response)) {
+                    setUbicacion(response);
+                    console.log(ubicacions);
+                }
+            } catch (error) {
+                console.error('Error al obtener las ubicaciones:', error);
+            }
+        }
+
+
         fetchCategories();
+        fetchUbications();
     }, []);
 
     //Actualizar la imagen de preview al haber cambios
@@ -53,12 +71,12 @@ export const CreateEvent = () => {
         const token = context.getToken();
 
         //TODO: Falta validaciones de campo --> cuando ya esten las alertas se debe de implementar
-        console.log(token, descripcion, lugar, fecha, selectedCategoryId, imagenUrl)
+        console.log(token, descripcion, selectedUbicationId, fecha, selectedCategoryId, imagenUrl)
 
         const response = await EventService.createEvent(
             token,
             descripcion,
-            lugar,
+            selectedUbicationId,
             hora,
             duracion,
             fecha,
@@ -138,12 +156,27 @@ export const CreateEvent = () => {
                                     value={descripcion}
                                     onChange={(e) => setDescripcion(e.target.value)} />
                             </div>
-                            <div className='mb-6 pl-2 lg:p-0'>
-                                <label className='block text-base mb-2 font-extrabold lg:text-lg' for="">Lugar</label>
-                                <input className='inline-block lg:ml-0 w-80 lg:w-5/6 p-2 leading-6 text-lg font-normal bg-white shadow border-2 border-gray rounded' type="text"
-                                    value={lugar}
-                                    onChange={(e) => setLugar(e.target.value)} />
+
+                            <div className='mb-6 pl-2 lg:pl-0'>
+                                <label className='block mb-2 font-extrabold text-normal lg:text-lg' for="">Ubicación</label>
+                                <div className='relative flex bg-gray-100'>
+                                    <button className=' relative text-lg px-3 py-3 leading-6 font-normal  flex justify-center items-center  bg-white focus:outline-none shadow border-2 border-gray focus:border-black text-black rounded group'>
+                                        <form action="#">
+                                            <select className='text-sm text-center'
+                                            
+                                                value={selectedUbicationId}
+                                                onChange={(e) => setSelectedUbicationId(e.target.value)}>
+                                                    <option value="">Selecciona una ubicación</option>
+                                                {ubicacions.map((ubicacion) => (
+                                                    <option key={ubicacion.code} value={ubicacion.code}>{ubicacion.nombre}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </form>
+                                    </button>
+                                </div>
                             </div>
+
                             <div className='-mx-3 flex lg:flex-nowrap lg:flex-row flex-col' >
                                 <div className='w-full px-3 sm:w-auto'>
                                     <div className='mb-5 pl-2 lg:pl-0'>
