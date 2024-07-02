@@ -4,6 +4,7 @@ import Footer from "../../components/Footer/Footer.jsx";
 import { useNavigate,useParams } from 'react-router-dom';
 import EventService from '../../services/Event/EventService';
 import CategoryService from '../../services/Category/CategoryService';
+import ubicationService from '../../services/Ubication/UbicationService.js';
 import context from '../../Context/UserContext';
 import { MessageSuccess, NotFound } from '../../utils/Alert.jsx';
 
@@ -11,13 +12,14 @@ const EditEvent = () => {
   const navigate = useNavigate();
   const [imagenUrl, setImagenUrl] = useState('');
   const [descripcion, setDescripcion] = useState('');
-  const [lugar, setLugar] = useState('');
   const [fecha, setFecha] = useState('');
   const [hora, setHora] = useState('');
   const [duracion, setDuracion] = useState('');
   const [imagenUrl1, setImagenUrl1] = useState('');
   const [categories, setCategories] = useState([]);
+  const [ubications, setUbications] = useState([]); // Ubicaciones
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
+  const [selectedUbicationId, setSelectedUbicationId] = useState('');
 
   const { id } = useParams();//Recibimos el id del evento a editar
 
@@ -33,12 +35,13 @@ const EditEvent = () => {
 
       if (response) {
         setDescripcion(response.descripcion);
-        setLugar(response.lugar);
+        setSelectedUbicationId(response.lugar);
         setFecha(formatearFecha(response.fecha_evento));
         setHora(response.hora);
         setDuracion(response.duracion);
         setImagenUrl1(response.imagen);
         setSelectedCategoryId(response.id_categoria.idCategoria);
+        
       }
     } catch (error) {
       console.error('Error al obtener el evento:', error);
@@ -59,7 +62,20 @@ const EditEvent = () => {
       }
     };
 
+    const fetchUbications = async () => {
+        const token = context.getToken();
+        try {
+            const response = await ubicationService.getAll(token);
+            if (Array.isArray(response)) {
+            setUbications(response);
+            }
+        } catch (error) {
+            console.error('Error al obtener las ubicaciones:', error);
+        }
+    }
+
     fetchCategories();
+    fetchUbications();
     fetchEvent();
   }, []);
 
@@ -70,7 +86,7 @@ const EditEvent = () => {
       token,
       id,
       descripcion,
-      lugar,
+      selectedUbicationId,
       hora,
       duracion,
       fecha,
@@ -149,11 +165,24 @@ const EditEvent = () => {
                                     value={descripcion}
                                     onChange={(e) => setDescripcion(e.target.value)} />
                             </div>
-                            <div className='mb-6 pl-2 lg:p-0'>
-                                <label className='block text-base mb-2 font-extrabold lg:text-lg' for="">Lugar</label>
-                                <input className='inline-block lg:ml-0 w-80 lg:w-5/6 p-2 leading-6 text-lg font-normal bg-white shadow border-2 border-gray rounded' type="text"
-                                    value={lugar}
-                                    onChange={(e) => setLugar(e.target.value)} />
+                            <div className='mb-6 pl-2 lg:pl-0'>
+                                <label className='block mb-2 font-extrabold text-normal lg:text-lg' for="">Ubicación</label>
+                                <div className='relative flex bg-gray-100'>
+                                    <button className=' relative text-lg px-3 py-3 leading-6 font-normal  flex justify-center items-center  bg-white focus:outline-none shadow border-2 border-gray focus:border-black text-black rounded group'>
+                                        <form action="#">
+                                            <select className='text-sm text-center'
+                                            
+                                                value={selectedUbicationId}
+                                                onChange={(e) => setSelectedUbicationId(e.target.value)}>
+                                                    <option value="">Selecciona una ubicación</option>
+                                                {ubications.map((ubicacion) => (
+                                                    <option key={ubicacion.code} value={ubicacion.code}>{ubicacion.nombre}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </form>
+                                    </button>
+                                </div>
                             </div>
                             <div className='-mx-3 flex lg:flex-nowrap lg:flex-row flex-col' >
                                 <div className='w-full px-3 sm:w-auto'>
