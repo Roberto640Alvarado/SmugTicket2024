@@ -53,7 +53,15 @@ export const CreateEvent = () => {
             }
         }
 
+        const fetchUbicationsPrecios = async () => {
+            //Prueba de precios por el lugar
+            const token = context.getToken();
+            const response = await EventService.getPreciosPorLugar(token, lugar);
+            console.log(response);
 
+        }
+
+        fetchUbicationsPrecios();
         fetchCategories();
         fetchUbications();
     }, []);
