@@ -33,7 +33,8 @@
     "react-router-dom": "^6.19.0",
     "react-zxing": "^2.0.0",
     "router": "^1.3.8",
-    "sweetalert2": "^11.10.1"
+    "sweetalert2": "^11.10.1",
+    "synaptic": "^1.1.4"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
