@@ -113,8 +113,31 @@ export const NewLocation = () => {
               className="w-full p-2 border border-solid border-gray-400 rounded text-center border-blue"
             />
           </div>
+        </div>
 
-          <div className="flex justify-center py-10">
+        <div className="w-5/6 md:w-3/5 mx-auto lg:mx-10 border border-dashed border-blue lg:w-1/3  p-4 mt-6 lg:mt-6 lg:ml-4 flex flex-col items-center">
+          <h2 className="font-bold text-xl mb-4 text-center">Sugerencias</h2>
+          {recomendaciones.map((rec, index) => (
+            <div key={index} className="w-full ">
+              <hr className="border-t border-gray-300" />
+              <p className="text-lg font-semibold my-3 text-center">Ubicación: {rec.ubicacion}</p>
+              <hr className="border-t w-full border-gray-300" />
+              <div className="flex flex-col items-center py-10">
+                {rec.precios.map((precio, idx) => (
+                  <button
+                    key={idx}
+                    className="w-3/4 max-w-sm bg-orange p-4 m-2 rounded-lg shadow-md text-center transition-transform transform hover:scale-95 hover:bg-blue"
+                  >
+                    <p className="text-lg font-medium text-white">Precio: {precio}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        
+      </div>
+      <div className="flex justify-center py-6">
             <button
               onClick={handleAddlocality}
               className="px-4 py-2 bg-orange rounded-md mr-4 text-black font-bold"
@@ -127,28 +150,7 @@ export const NewLocation = () => {
             >
               Ver localidades
             </button>
-          </div>
         </div>
-
-        <div className="w-full lg:w-1/3 border-2 rounded-2xl p-4 mt-6 lg:mt-6 lg:ml-4 flex flex-col items-center">
-          <h2 className="font-bold text-2xl mb-4 text-center">Sugerencias</h2>
-          {recomendaciones.map((rec, index) => (
-            <div key={index} className="w-full">
-              <p className="text-xl font-semibold text-center mb-4">Ubicación: {rec.ubicacion}</p>
-              <div className="flex flex-col items-center">
-                {rec.precios.map((precio, idx) => (
-                  <div
-                    key={idx}
-                    className="w-full max-w-sm bg-orange p-4 mb-4 rounded-lg shadow-md text-center transition-transform transform hover:scale-95 hover:bg-blue"
-                  >
-                    <p className="text-lg font-medium text-white">Precio: {precio}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
     </>
   );
 };
