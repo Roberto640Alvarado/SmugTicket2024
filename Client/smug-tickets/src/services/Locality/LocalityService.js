@@ -1,5 +1,4 @@
 import axios from 'axios';
-
 const BASE_API = 'https://smugticket2024.onrender.com'
 
 
