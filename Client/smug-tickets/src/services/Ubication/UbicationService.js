@@ -22,6 +22,7 @@ const ubicationService = {
     getOneUbications: async (code) =>{
         try {
             const response = await API.get(`/ubicacion/${code}`);
+            //console.log(response.data)
             return response.data;
         } catch (error) {
             console.error('Error fetching ubication:', error);
