@@ -17,6 +17,8 @@ export const MyTickets = () => {
   const fetchTickets = async () => {
     const token = context.getToken();
 
+    console.log(token);
+
     const response = await ticketService.getMyTickets(token);
     console.log(response);
 

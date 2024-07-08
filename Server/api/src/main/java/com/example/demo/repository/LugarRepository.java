@@ -13,4 +13,5 @@ public interface LugarRepository extends CrudRepository<Lugares, UUID> {
         
     Lugares findByCode(UUID id);
     List<Lugares> findByIdeventoAndEstado(Evento id_evento, Integer estado);
+    List<Lugares> findByIdevento(Evento evento);
 }

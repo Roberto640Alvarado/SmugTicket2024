@@ -15,7 +15,8 @@ public class CorsConfig {
         config.setAllowCredentials(true);
         config.addAllowedOrigin("http://localhost:5173");
         config.addAllowedOrigin("http://24.199.126.194/");
-         config.addAllowedOrigin("https://smugtickets.netlify.app");
+         config.addAllowedOrigin("https://smugticket2024-aca.onrender.com");
+         config.addAllowedOrigin("https://smug-aca.fyi");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.addExposedHeader("Authorization");

@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -14,4 +15,5 @@ public interface EventoService {
 	void save(Evento evento);
 	Page<Evento> getEventos(Pageable pageable, Integer estado);
 	Page<Evento> buscarEventos(Pageable pageable, String evento, Integer estado);
+	List<Double> getPreciosByLugar(String lugar);
 }

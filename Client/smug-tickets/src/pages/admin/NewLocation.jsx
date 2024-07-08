@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import LocalityService from "../../services/Locality/LocalityService";
+import UbicationService from "../../services/Ubication/UbicationService";
+import { trainAndSuggestPrices } from "../../utils/priceSuggester";
 import { MessageSuccess, NotFound } from "../../utils/Alert";
 import context from "../../Context/UserContext";
 
@@ -9,14 +11,33 @@ export const NewLocation = () => {
   const [descripcion, setDescripcion] = useState("");
   const [capacidad, setCapacidad] = useState("");
   const [precio, setPrecio] = useState("");
+  const [nombreUbicacion, setNombreUbicacion] = useState("");
+  const [recomendacione, setRecomendaciones] = useState([]);
 
-  const { id, evento } = useParams();
+  const { id, evento, ubicacion } = useParams();
 
   const reset = () => {
     setDescripcion("");
     setCapacidad("");
     setPrecio("");
   };
+
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      let token = context.getToken();
+      //console.log("ubicacion", ubicacion, token)
+      const suggestions = await trainAndSuggestPrices(token, ubicacion);
+      setRecomendaciones(suggestions);
+    };
+
+    const fetchNombreUbicacion = async () => {
+      const ubicacionNombre = await UbicationService.getOneUbications(ubicacion);
+      setNombreUbicacion(ubicacionNombre.nombre);
+    }
+
+    fetchNombreUbicacion();
+    fetchSuggestions();
+  }, [ubicacion]);
 
   const handleAddlocality = () => {
     handleCreateLocation();
@@ -48,9 +69,9 @@ export const NewLocation = () => {
     console.log(response);
   };
 
-  const recomendaciones = [
-    { ubicacion: "Estadio Las Palmas", precios: ["$50", "$75", "$100"] },
-  ];
+  const handleSuggestionClick = (suggestedPrice) => {
+    setPrecio(suggestedPrice.toFixed(2));
+  };
 
   return (
     <>
@@ -113,8 +134,30 @@ export const NewLocation = () => {
               className="w-full p-2 border border-solid border-gray-400 rounded text-center border-blue"
             />
           </div>
+        </div>
 
-          <div className="flex justify-center py-10">
+        <div className="w-5/6 md:w-3/5 mx-auto lg:mx-10 border border-dashed border-blue lg:w-1/3  p-4 mt-6 lg:mt-6 lg:ml-4 flex flex-col items-center">
+        <h2 className="font-bold text-xl mb-4 text-center">Sugerencias</h2>
+          <div className="w-full">
+            <hr className="border-t border-gray-300" />
+            <p className="text-lg font-semibold my-3 text-center">Ubicación: {nombreUbicacion}</p>
+            <hr className="border-t w-full border-gray-300" />
+            <div className="flex flex-col items-center py-10">
+              {recomendacione.map((precio, index) => (
+                <button
+                  key={index}
+                  className="w-3/4 max-w-sm bg-orange p-4 m-2 rounded-lg shadow-md text-center transition-transform transform hover:scale-95 hover:bg-blue"
+                  onClick={() => handleSuggestionClick(precio)}
+                >
+                  <p className="text-lg font-medium text-white">Precio: ${precio.toFixed(2)}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      <div className="flex justify-center py-6">
             <button
               onClick={handleAddlocality}
               className="px-4 py-2 bg-orange rounded-md mr-4 text-black font-bold"
@@ -127,28 +170,7 @@ export const NewLocation = () => {
             >
               Ver localidades
             </button>
-          </div>
         </div>
-
-        <div className="w-full lg:w-1/3 border-2 rounded-2xl p-4 mt-6 lg:mt-6 lg:ml-4 flex flex-col items-center">
-          <h2 className="font-bold text-2xl mb-4 text-center">Sugerencias</h2>
-          {recomendaciones.map((rec, index) => (
-            <div key={index} className="w-full">
-              <p className="text-xl font-semibold text-center mb-4">Ubicación: {rec.ubicacion}</p>
-              <div className="flex flex-col items-center">
-                {rec.precios.map((precio, idx) => (
-                  <div
-                    key={idx}
-                    className="w-full max-w-sm bg-orange p-4 mb-4 rounded-lg shadow-md text-center transition-transform transform hover:scale-95 hover:bg-blue"
-                  >
-                    <p className="text-lg font-medium text-white">Precio: {precio}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
     </>
   );
 };

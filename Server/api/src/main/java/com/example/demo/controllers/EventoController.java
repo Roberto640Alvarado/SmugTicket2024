@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,13 +133,17 @@ public class EventoController {
 			findEvento.setEstado(1);
 			eventoservice.save(findEvento);
 			return ResponseEntity.ok("Evento editado exitosamente");
-		}
+		}	
+	}
+	
+	@GetMapping("/preciosPorLugar")
+    public ResponseEntity<?> getPreciosPorLugar(@RequestParam String lugar) {
+        List<Double> precios = eventoservice.getPreciosByLugar(lugar);
+        return ResponseEntity.ok(precios);
+    }
+	
 		
-	}
-	
-	
-	
-	}
+}
 	
 
 

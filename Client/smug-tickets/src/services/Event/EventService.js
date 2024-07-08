@@ -1,6 +1,6 @@
 import axios from 'axios';
+const BASE_API = 'https://smugticket2024.onrender.com'
 
-const BASE_API = 'http://localhost:8080'
 
 
 const API = axios.create({
@@ -151,6 +151,27 @@ const eventService = {
             throw error;
         }
     },
+     //Obtener precios por lugar
+     getPreciosPorLugar: async (token, lugar) => {
+        try {
+            const response = await API.get(`/evento/preciosPorLugar?lugar=${lugar}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if (response.status === 200) {
+                console.log(response.data);
+                return response.data;
+            } else {
+                throw new Error(response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching prices:', error);
+            return {
+                hasError: true,
+            };
+        }
+    }
 
 }
 

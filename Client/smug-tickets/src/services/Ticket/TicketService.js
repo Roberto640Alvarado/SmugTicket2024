@@ -1,6 +1,6 @@
 import axios from 'axios';
+const BASE_API = 'https://smugticket2024.onrender.com'
 
-const BASE_API = 'http://localhost:8080'
 
 const API = axios.create({
     baseURL: BASE_API,
@@ -120,6 +120,31 @@ const ticketService = {
                 },
             });
 
+            if (response.status === 200) {
+                console.log(response.data);
+                return response.data;
+            } else {
+                throw new Error(response.status);
+            }
+        } catch (error) {
+            console.error(error);
+            return {
+                hasError: true,
+            };
+        }
+    },
+    getTicketInformation: async (token, ticketId) => {
+        try {
+            const response = await API.get('/ticket/getTicket',
+            {
+                params: {
+                    ticketID: ticketId
+                },
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
             if (response.status === 200) {
                 console.log(response.data);
                 return response.data;

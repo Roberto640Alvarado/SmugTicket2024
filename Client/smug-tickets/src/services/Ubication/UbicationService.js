@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_API = 'http://localhost:8080'
+const BASE_API = 'https://smugticket2024.onrender.com'
 
 const API = axios.create({
   baseURL: BASE_API,
@@ -22,6 +22,7 @@ const ubicationService = {
     getOneUbications: async (code) =>{
         try {
             const response = await API.get(`/ubicacion/${code}`);
+            //console.log(response.data)
             return response.data;
         } catch (error) {
             console.error('Error fetching ubication:', error);

@@ -7,9 +7,11 @@ import context from "../../Context/UserContext";
 const LectorQR = () => {
   const [result, setResult] = useState("");
   const [verificationResult, setVerificationResult] = useState(null);
+  const [noCodeMessage, setNoCodeMessage] = useState(false);
   const { ref } = useZxing({
     onDecodeResult(result) {
       setResult(result.getText());
+      setNoCodeMessage(false); // Ocultar el mensaje cuando se detecta un código
     },
   });
 
@@ -18,15 +20,25 @@ const LectorQR = () => {
       if (result) {
         try {
           const token = context.getToken();
-          const eventoId = result; 
+          const eventoId = result;
 
-          const response = await ticketService.verificarTicket(token, eventoId);
+          const ticketInfo = await ticketService.getTicketInformation(token, eventoId);
 
-          // Actualiza el estado con el resultado de la verificación
-          setVerificationResult(response);
+          if (ticketInfo) {
+            if (ticketInfo.estado === 1) {
+              const response = await ticketService.verificarTicket(token, eventoId);
+
+              // Actualiza el estado con el resultado de la verificación
+              setVerificationResult(response);
+            } else {
+              setVerificationResult("El ticket ya fue escaneado");
+            }
+          } else {
+            throw new Error();
+          }
         } catch (error) {
           console.error("Error al verificar el ticket:", error);
-          // Maneja el error según tus necesidades
+          setVerificationResult({ verified: false, message: "Error al verificar el ticket." }); // Asegurarse de manejar el error
         }
       }
     };
@@ -34,58 +46,56 @@ const LectorQR = () => {
     verificarTicket();
   }, [result]);
 
-  const containerStyle = {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    minHeight: "100vh",
-    padding: "20px",
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!result) {
+        setNoCodeMessage(true);
+      }
+    }, 4000);
+
+    return () => clearTimeout(timer);
+  }, [result]);
+
+  const getVerificationMessage = () => {
+    if (verificationResult === null) return null;
+    if (verificationResult.verified) {
+      return {
+        message: verificationResult.message || "No se pudo verificar el ticket.",
+        color: "bg-red-200 border-red-500",
+      };
+    } else {
+      return {
+        message: "Ticket verificado exitosamente.",
+        color: "bg-green-200 border-green-500",
+      };
+    }
   };
 
-  const titleStyle = {
-    fontSize: "24px",
-    fontWeight: "bold",
-    margin: "10px 0",
-  };
-
-  const videoContainerStyle = {
-    width: "100%",
-    textAlign: "center",
-    marginTop: "10px",
-  };
-
-  const previewStyle = {
-    height: "50vh",
-    width: "100%",
-  };
-
-  const ticketContainerStyle = {
-    marginTop: "10px",
-    padding: "10px",
-    border: "1px solid #ccc",
-    borderRadius: "8px",
-    textAlign: "center",
-  };
+  const verificationMessage = getVerificationMessage();
 
   return (
     <>
       <NavbarQR />
-      <div style={containerStyle}>
-        <p style={titleStyle}>Escanea tu ticket</p>
-        <div style={videoContainerStyle}>
-          <video style={previewStyle} ref={ref} />
-          {verificationResult && (
-            <div style={ticketContainerStyle}>
-              <p style={{ fontSize: "18px", fontWeight: "bold" }}>Resultado de la verificación:</p>
-              <p style={{ fontSize: "14px" }}>{JSON.stringify(verificationResult)}</p>
-            </div>
+      <div className="flex flex-col items-center min-h-screen bg-gray-100 py-10 px-4">
+        <p className="text-2xl font-bold mb-5 text-center">Escanea tu ticket</p>
+        <p className="text-lg text-blue-600 mb-5 text-center">Asegúrate de centrar tu código</p>
+        <div className="w-full flex justify-center mb-5 relative">
+          <video className="border rounded-lg shadow-lg w-full max-w-md h-64" ref={ref} />
+          {noCodeMessage && (
+            <p className="absolute bottom-5 left-1/2 transform -translate-x-1/2 text-lg text-red-500">
+              Acerca tu código
+            </p>
           )}
         </div>
+        {verificationMessage && (
+          <div className={`mt-5 p-4 border rounded-lg shadow-lg text-center w-full max-w-md ${verificationMessage.color}`}>
+            <p className="text-lg font-bold mb-2">Resultado de la verificación:</p>
+            <p className="text-sm">{verificationMessage.message}</p>
+          </div>
+        )}
       </div>
     </>
   );
 };
 
 export default LectorQR;
-
-

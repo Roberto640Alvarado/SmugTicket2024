@@ -53,7 +53,15 @@ export const CreateEvent = () => {
             }
         }
 
+        const fetchUbicationsPrecios = async () => {
+            //Prueba de precios por el lugar
+            const token = context.getToken();
+            const response = await EventService.getPreciosPorLugar(token, lugar);
+            console.log(response);
 
+        }
+
+        fetchUbicationsPrecios();
         fetchCategories();
         fetchUbications();
     }, []);
@@ -92,7 +100,7 @@ export const CreateEvent = () => {
         if(!response.hasError){
             MessageSuccess('Evento creado exitosamente');
             console.log("Evento creado exitosamente");
-            navigate(`/admin/newlocation/${id}/${descripcion}`);
+            navigate(`/admin/newlocation/${id}/${descripcion}/${selectedUbicationId}`);
         }else{
             NotFound('Faltan campos!')
         }
