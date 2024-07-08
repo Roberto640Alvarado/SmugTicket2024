@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { BsChevronCompactLeft, BsChevronCompactRight } from "react-icons/bs";
 import { RxDotFilled } from "react-icons/rx";
 
-import image1 from '../../assets/Presentacion1.png'
-import image2 from '../../assets/Presentacion2.png';
-import image3 from '../../assets/Presentacion3.png';
+import image1 from '../../assets/Presentacion1.jpg'
+import image2 from '../../assets/Presentacion2.jpg';
+import image3 from '../../assets/Presentacion3.jpeg';
 
 const Carousel = () => {
     const slides = [
