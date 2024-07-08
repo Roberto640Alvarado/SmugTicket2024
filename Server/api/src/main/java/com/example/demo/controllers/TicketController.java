@@ -28,6 +28,8 @@ import com.example.demo.services.LugaresService;
 import com.example.demo.services.TicketsService;
 import com.example.demo.services.Traspaso_ticketsService;
 import com.example.demo.services.UserService;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/ticket")
@@ -135,4 +137,18 @@ public class TicketController {
 			
 		}
 	}
+
+	@GetMapping("/getTicket")
+	public ResponseEntity<?> getTicket(@RequestParam String ticketID) {
+		UUID ticketUUID = UUID.fromString(ticketID);
+
+		Tickets find  = ticketService.traerTicket(ticketUUID);
+
+		if (find != null) {
+			return ResponseEntity.status(HttpStatus.OK).body(find);
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ticket no encontrado");
+		}
+	}
+	
 }
