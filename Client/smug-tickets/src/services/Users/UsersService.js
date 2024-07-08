@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 
-const BASE_API = 'http://localhost:8080'
+const BASE_API = 'https://smugticket2024.onrender.com'
 
 const API = axios.create({
   baseURL: BASE_API,
