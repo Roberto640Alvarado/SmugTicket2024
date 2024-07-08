@@ -1,0 +1,24 @@
+# Usar una imagen de Maven para compilar el proyecto
+FROM maven:3.8.4-openjdk-17 AS build
+WORKDIR /app
+
+# Copiar los archivos de configuración y el código fuente
+COPY pom.xml .
+COPY src ./src
+
+# Compilar el proyecto
+RUN mvn clean package -DskipTests
+
+# Usar una imagen de OpenJDK para ejecutar la aplicación
+FROM openjdk:17-jdk-alpine
+WORKDIR /app
+
+# Copiar el archivo JAR generado desde la fase de compilación
+COPY --from=build /app/target/api-0.0.1-SNAPSHOT.jar java-app.jar
+
+# Exponer el puerto en el que la aplicación se ejecutará
+EXPOSE 8080
+
+# Comando para ejecutar la aplicación
+ENTRYPOINT ["java", "-jar", "java-app.jar"]
+

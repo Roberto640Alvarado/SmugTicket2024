@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  java_app:
+    container_name: java_app
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dpg-cq5ibulds78s73d2dhi0-a.oregon-postgres.render.com/ticketdb_nx1c
+      - SPRING_DATASOURCE_USERNAME=smugtickets
+      - SPRING_DATASOURCE_PASSWORD=KAqdZrErSur4lRUySINdG8gD3e1B6kdP
+      - JWT_SECRET=ultrasecrekeywithmajorof255bitsdiosllevameya
+      - JWT_EXPTIME=1296000000
+      - SPRING_MAIL_HOST=smtp.gmail.com
+      - SPRING_MAIL_PORT=587
+      - SPRING_MAIL_USERNAME=orellanaj2321@gmail.com
+      - SPRING_MAIL_PASSWORD=palodecoco
+    depends_on:
+      - java_db
+
+  java_db:
+    container_name: java_db
+    image: postgres:12
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+

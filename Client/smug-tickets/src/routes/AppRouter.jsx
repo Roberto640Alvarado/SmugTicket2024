@@ -47,7 +47,7 @@ const Location = () => {
             {/*VISTAS DE ADMIN*/ }
             <Route path="/admin/Home" element={<ProtectedAdmin component={HomeAdmin} />} />
             <Route path="/admin/createEvent" element={<ProtectedAdmin component={CreateEvent} />} />
-            <Route path="/admin/newlocation/:id/:evento" element={<ProtectedAdmin component={NewLocation} />} />
+            <Route path="/admin/newlocation/:id/:evento/:ubicacion" element={<ProtectedAdmin component={NewLocation} />} />
             <Route path="/admin/listlocations/:id" element={<ProtectedAdmin component={ListOfLocations} />} />
             <Route path="/admin/editEvent/:id" element={<ProtectedAdmin component={EditEvent} />} />
             <Route path="/admin/allusers" element={<ProtectedAdmin component={UserManagement} />} />
