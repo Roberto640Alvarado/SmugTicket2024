@@ -84,7 +84,7 @@ const ViewEvent = () => {
                             <div key={index} className="flex justify-between lg:ml-20">
                                 <p className="text-2xl">{localidad.descripcion}</p>
                                 <div className="ml-10 lg:ml-20">
-                                    <p className="font-bold text-2xl">{`$${localidad.precio}`}</p>
+                                    <p className="font-bold text-2xl">{`${localidad.precio.toFixed(2)}`}</p>
                                 </div>
                             </div>
                         ))}
