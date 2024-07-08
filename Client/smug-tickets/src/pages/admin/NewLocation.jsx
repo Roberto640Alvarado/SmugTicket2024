@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import LocalityService from "../../services/Locality/LocalityService";
+import UbicationService from "../../services/Ubication/UbicationService";
+import { trainAndSuggestPrices } from "../../utils/priceSuggester";
 import { MessageSuccess, NotFound } from "../../utils/Alert";
 import context from "../../Context/UserContext";
 
@@ -9,14 +11,33 @@ export const NewLocation = () => {
   const [descripcion, setDescripcion] = useState("");
   const [capacidad, setCapacidad] = useState("");
   const [precio, setPrecio] = useState("");
+  const [nombreUbicacion, setNombreUbicacion] = useState("");
+  const [recomendacione, setRecomendaciones] = useState([]);
 
-  const { id, evento } = useParams();
+  const { id, evento, ubicacion } = useParams();
 
   const reset = () => {
     setDescripcion("");
     setCapacidad("");
     setPrecio("");
   };
+
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      let token = context.getToken();
+      //console.log("ubicacion", ubicacion, token)
+      const suggestions = await trainAndSuggestPrices(token, ubicacion);
+      setRecomendaciones(suggestions);
+    };
+
+    const fetchNombreUbicacion = async () => {
+      const ubicacionNombre = await UbicationService.getOneUbications(ubicacion);
+      setNombreUbicacion(ubicacionNombre.nombre);
+    }
+
+    fetchNombreUbicacion();
+    fetchSuggestions();
+  }, [ubicacion]);
 
   const handleAddlocality = () => {
     handleCreateLocation();
@@ -48,9 +69,9 @@ export const NewLocation = () => {
     console.log(response);
   };
 
-  const recomendaciones = [
-    { ubicacion: "Estadio Las Palmas", precios: ["$50", "$75", "$100"] },
-  ];
+  const handleSuggestionClick = (suggestedPrice) => {
+    setPrecio(suggestedPrice.toFixed(2));
+  };
 
   return (
     <>
@@ -116,24 +137,23 @@ export const NewLocation = () => {
         </div>
 
         <div className="w-5/6 md:w-3/5 mx-auto lg:mx-10 border border-dashed border-blue lg:w-1/3  p-4 mt-6 lg:mt-6 lg:ml-4 flex flex-col items-center">
-          <h2 className="font-bold text-xl mb-4 text-center">Sugerencias</h2>
-          {recomendaciones.map((rec, index) => (
-            <div key={index} className="w-full ">
-              <hr className="border-t border-gray-300" />
-              <p className="text-lg font-semibold my-3 text-center">Ubicación: {rec.ubicacion}</p>
-              <hr className="border-t w-full border-gray-300" />
-              <div className="flex flex-col items-center py-10">
-                {rec.precios.map((precio, idx) => (
-                  <button
-                    key={idx}
-                    className="w-3/4 max-w-sm bg-orange p-4 m-2 rounded-lg shadow-md text-center transition-transform transform hover:scale-95 hover:bg-blue"
-                  >
-                    <p className="text-lg font-medium text-white">Precio: {precio}</p>
-                  </button>
-                ))}
-              </div>
+        <h2 className="font-bold text-xl mb-4 text-center">Sugerencias</h2>
+          <div className="w-full">
+            <hr className="border-t border-gray-300" />
+            <p className="text-lg font-semibold my-3 text-center">Ubicación: {nombreUbicacion}</p>
+            <hr className="border-t w-full border-gray-300" />
+            <div className="flex flex-col items-center py-10">
+              {recomendacione.map((precio, index) => (
+                <button
+                  key={index}
+                  className="w-3/4 max-w-sm bg-orange p-4 m-2 rounded-lg shadow-md text-center transition-transform transform hover:scale-95 hover:bg-blue"
+                  onClick={() => handleSuggestionClick(precio)}
+                >
+                  <p className="text-lg font-medium text-white">Precio: ${precio.toFixed(2)}</p>
+                </button>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
         
       </div>

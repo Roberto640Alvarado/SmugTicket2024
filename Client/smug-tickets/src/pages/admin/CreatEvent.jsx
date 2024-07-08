@@ -100,7 +100,7 @@ export const CreateEvent = () => {
         if(!response.hasError){
             MessageSuccess('Evento creado exitosamente');
             console.log("Evento creado exitosamente");
-            navigate(`/admin/newlocation/${id}/${descripcion}`);
+            navigate(`/admin/newlocation/${id}/${descripcion}/${selectedUbicationId}`);
         }else{
             NotFound('Faltan campos!')
         }
