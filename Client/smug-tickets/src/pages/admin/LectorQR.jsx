@@ -22,10 +22,20 @@ const LectorQR = () => {
           const token = context.getToken();
           const eventoId = result;
 
-          const response = await ticketService.verificarTicket(token, eventoId);
+          const ticketInfo = await ticketService.getTicketInformation(token, eventoId);
 
-          // Suponemos que la respuesta tiene una propiedad 'verified' que indica el estado del ticket
-          setVerificationResult(response);
+          if (ticketInfo) {
+            if (ticketInfo.estado === 1) {
+              const response = await ticketService.verificarTicket(token, eventoId);
+
+              // Actualiza el estado con el resultado de la verificación
+              setVerificationResult(response);
+            } else {
+              setVerificationResult("El ticket ya fue escaneado");
+            }
+          } else {
+            throw new Error();
+          }
         } catch (error) {
           console.error("Error al verificar el ticket:", error);
           setVerificationResult({ verified: false, message: "Error al verificar el ticket." }); // Asegurarse de manejar el error
