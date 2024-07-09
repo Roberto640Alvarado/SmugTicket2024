@@ -4,7 +4,7 @@ SmugTickets es una aplicación web intuitiva y fácil de usar que te permite com
 ##documentación testing [SmugTickets](https://docs.google.com/spreadsheets/d/1eh25dKlBCEn4LGMo6pzd2NH6pGBx5gATgAieiWNF4kM/edit?usp=drivesdk)
 
 
-## Enlace de [SmugTickets](https://smugtickets.netlify.app/)
+## Enlace de [SmugTickets](https://smug-aca.fyi/)
 
 ## Enlace documentacion API [SmugTickets](https://documenter.getpostman.com/view/20859166/2s93zE3L2K)
 
